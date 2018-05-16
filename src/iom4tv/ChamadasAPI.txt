@@ -1,0 +1,30 @@
+Boas Rafa, mando os links dos documentos que te possam interessar  e descrevo em baixo a chamada à API
+
+http://ria.ua.pt/handle/10773/22543 (A minha tese ja tem as coisas descritas)
+
+https://sci-hub.tw/10.1007/978-3-319-63321-3_1
+https://sci-hub.tw/10.1016/j.procs.2017.11.077
+http://jauti2017.web.ua.pt/wp-content/uploads/2017/10/Procedings_jAUTI2017.pdf    (pag 132/143)
+
+Method: POST
+Route: http://api_mysql.tv4e.pt/api/sendKey/841a54cbcf8a8086
+Parameters: keyCode -> 40 (por exemplo)
+
+KeyCodes:
+    a ) Mudar de canal:
+              40/38 – up and down 
+              49/50/51/52/53/54/55/56/57 – teclas 1 a 9 do comando
+
+    
+     b) Biblioteca:
+
+                48 – Abrir e fechar biblioteca
+               13 – OK
+
+               37/39 – esquerda e direita
+
+ 
+
+      c) Enviar vídeo:
+
+                8 – Backspace
