@@ -11,7 +11,7 @@ package iom4tv;
  */
 public enum TVkeyCodes {
     // Mudar de canal: 40/38 – up and down 
-    UP(40), DOWN(39),
+    UP(40), DOWN(38),
     
     // 49/50/51/52/53/54/55/56/57 – teclas 1 a 9 do comando
     ONE(49), TWO(50), TRHEE(51), FOUR(52), FIVE(53),
