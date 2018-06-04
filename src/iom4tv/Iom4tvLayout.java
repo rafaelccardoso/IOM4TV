@@ -5,14 +5,32 @@
  */
 package iom4tv;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.net.ssl.HttpsURLConnection;
+import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import sun.net.www.http.HttpClient;
 
 /**
  *
@@ -145,45 +163,50 @@ public class Iom4tvLayout extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void upButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upButtonActionPerformed
-        mainTextArea.setText("UP");
-        
-        sendPost(TVkeyCodes.UP);
+        mainTextArea.setText("UP");    
+        sendPostHttp(TVkeyCodes.UP);
     }//GEN-LAST:event_upButtonActionPerformed
 
     private void leftButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_leftButtonActionPerformed
         mainTextArea.setText("LEFT");
-        sendPost(TVkeyCodes.LEFT);
+        sendPostHttp(TVkeyCodes.LEFT);
     }//GEN-LAST:event_leftButtonActionPerformed
 
     private void rightButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rightButtonActionPerformed
-        mainTextArea.setText("RIGHT");
-        sendPost(TVkeyCodes.RIGHT);
+            mainTextArea.setText("RIGHT");
+            sendPostHttp(TVkeyCodes.RIGHT);      
     }//GEN-LAST:event_rightButtonActionPerformed
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        mainTextArea.setText("OK");
-        sendPost(TVkeyCodes.OK);
+            mainTextArea.setText("OK");
+            sendPostHttp(TVkeyCodes.OK);
     }//GEN-LAST:event_okButtonActionPerformed
 
     
     private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downButtonActionPerformed
         mainTextArea.setText("DOWN");
-        sendPost(TVkeyCodes.DOWN);
+            sendPostHttp(TVkeyCodes.DOWN);      
     }//GEN-LAST:event_downButtonActionPerformed
 
     
     private void sendPost(TVkeyCodes command) {
         URL url;
         String commandStr = command.toString();
-        
+        String cmd = command.name();
+        TVkeyCodes valor = command.valueOf(command.toString());
+        Integer x = valor.keyCode; 
         Logger.getLogger(Iom4tvLayout.class.getName()).log(Level.INFO, "Entrando no sendPost, parâmetro: " + commandStr);
         try {            
             url = new URL(URL_BOX);
             URLConnection con = url.openConnection();
             HttpURLConnection http = (HttpURLConnection) con;
             http.setRequestMethod("POST"); 
-            http.addRequestProperty("keyCode", commandStr);
-            //http.setDoOutput(true);
+            
+            //http.addRequestProperty("keyCode", commandStr);
+            http.addRequestProperty("keyCode", x.toString());
+            http.connect();
+            
+            http.setDoOutput(true);
             
             System.out.println("Retorno do servidor 1: " + http.getResponseMessage());
             System.out.println("Código retornado do servidor: " + http.getResponseCode());
@@ -199,7 +222,43 @@ public class Iom4tvLayout extends javax.swing.JFrame {
             Logger.getLogger(Iom4tvLayout.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
+    
+    public void sendPostHttp(TVkeyCodes command){
+        try {
+            CloseableHttpClient httpclient = HttpClients.createDefault();
+            
+            HttpPost httpPost = new HttpPost(URL_BOX);
+            List<NameValuePair> nvps = new ArrayList<>();
+            
+            Integer a  = command.keyCode;
+            nvps.add(new BasicNameValuePair("keyCode", a.toString()));
+            
+            
+            try {
+                httpPost.setEntity(new UrlEncodedFormEntity(nvps));
+            } catch (UnsupportedEncodingException ex) {
+                Logger.getLogger(Iom4tvLayout.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            CloseableHttpResponse response2 = httpclient.execute(httpPost);
+            
+            try {
+                System.out.println(response2.getStatusLine());
+                HttpEntity entity2 = response2.getEntity();
+                // do something useful with the response body
+                // and ensure it is fully consumed
+                EntityUtils.consume(entity2);
+            } finally {
+                response2.close();
+            }
+            
+        } catch (IOException ex) {
+            Logger.getLogger(Iom4tvLayout.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    
+    }
+    
+    
     /**
      * @param args the command line arguments
      */
